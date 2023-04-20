@@ -1,9 +1,12 @@
-//Viral Science www.youtube.com/c/viralscience  www.viralsciencecreativity.com
-//ESP32 Camera Surveillance Car
+#define BLYNK_TEMPLATE_ID "TMPLlVW1G_-M"
+#define BLYNK_TEMPLATE_NAME "Survillance"
+#define BLYNK_AUTH_TOKEN "ooIikNRDda1dkmn4ltNzyH4-ajzAHNdp"
 
 #include "esp_camera.h"
 #include <WiFi.h>
-
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
+#define BLYNK_PRINT Serial
 //
 // WARNING!!! Make sure that you have either selected ESP32 Wrover Module,
 //            or another board which has PSRAM enabled
@@ -17,6 +20,7 @@
 
 const char* ssid = "MyNetwork";   //Enter SSID WIFI Name
 const char* password = "air98448";   //Enter WIFI Password
+WidgetLCD lcd(V0);
 
 
 #if defined(CAMERA_MODEL_WROVER_KIT)
@@ -64,11 +68,11 @@ const char* password = "air98448";   //Enter WIFI Password
 
 // GPIO Setting
 extern int gpLb =  2; // Left 1
-extern int gpLf = 14; // Left 2
+ extern int gpLf = 14; // Left 2
 extern int gpRb = 15; // Right 1
-extern int gpRf = 13; // Right 2
-extern int gpLed =  4; // Light
-extern String WiFiAddr ="";
+ extern int gpRf = 13; // Right 2
+ extern int gpLed =  4; // Light
+extern  String WiFiAddr ="";
 
 void startCameraServer();
 
@@ -76,7 +80,6 @@ void setup() {
   Serial.begin(115200);
   Serial.setDebugOutput(true);
   Serial.println();
-
 
   pinMode(gpLb, OUTPUT); //Left Backward
   pinMode(gpLf, OUTPUT); //Left Forward
@@ -135,6 +138,8 @@ void setup() {
   s->set_framesize(s, FRAMESIZE_SVGA);
 
   WiFi.begin(ssid, password);
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, password);
+  
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -149,9 +154,13 @@ void setup() {
   Serial.print(WiFi.localIP());
   WiFiAddr = WiFi.localIP().toString();
   Serial.println("' to connect");
+   
+
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+   Blynk.run();
+    lcd.clear(); 
+  lcd.print(0, 0, WiFiAddr);
 
 }
